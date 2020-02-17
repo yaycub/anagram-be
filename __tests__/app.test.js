@@ -17,4 +17,8 @@ describe('app routes', () => {
   afterAll(() => {
     return mongoose.connection.close();
   });
+
+  it('can pass a test', () => {
+    //test placeholder
+  });
 });
