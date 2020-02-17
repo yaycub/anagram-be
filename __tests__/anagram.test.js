@@ -21,7 +21,7 @@ describe('anagram routes', () => {
   it('can get anagrams', () => {
     
     return request(app)
-      .post('/api/v1/anagram')
+      .post('/api/v1/anagrams')
       .send({ word: 'hi' })
       .then(res => {
         expect(res.body).toEqual(['hi']);
