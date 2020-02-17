@@ -18,7 +18,20 @@ describe('app routes', () => {
     return mongoose.connection.close();
   });
 
-  it('can pass a test', () => {
-    //test placeholder
+  it('can POST a user with signup', () => {
+    return request(app)
+      .post('/api/v1/auth/signup')
+      .send({
+        email: 'test@test.com',
+        password: '123123'
+      })
+      .then(res => {
+        expect(res.header['set-cookie'][0]).toEqual(expect.stringContaining('session='));
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          email: 'test@test.com',
+          __v: 0
+        });
+      });
   });
 });
