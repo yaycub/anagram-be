@@ -84,4 +84,18 @@ describe('app routes', () => {
         });
       });
   });
+
+  it('fails to login a user with a wrong password', async() => {
+    await User.create({ email: 'test@test.com', password: 'password' });
+
+    return request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'test@test.com', password: 'WRONG' })
+      .then(res => {
+        expect(res.body).toEqual({
+          status: 403,
+          message: 'Invalid Email/Password'
+        });
+      });
+  });
 });
