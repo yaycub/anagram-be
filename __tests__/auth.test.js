@@ -54,4 +54,34 @@ describe('app routes', () => {
         });
       });
   });
+
+  it('can login a user', async() => {
+    const user = await User.create({ email: 'test@test.com', password: 'password' });
+
+    return request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'test@test.com', password: 'password' })
+      .then(res => {
+        expect(res.header['set-cookie'][0]).toEqual(expect.stringContaining('session='));
+        expect(res.body).toEqual({
+          _id: user.id,
+          email: 'test@test.com',
+          __v: 0
+        });
+      });
+  });
+
+  it('fails to login a user with a wrong email', async() => {
+    await User.create({ email: 'test@test.com', password: 'password' });
+
+    return request(app)
+      .post('/api/v1/auth/login')
+      .send({ email: 'bademail@test.com', password: 'password' })
+      .then(res => {
+        expect(res.body).toEqual({
+          status: 403,
+          message: 'Invalid Email/Password'
+        });
+      });
+  });
 });
