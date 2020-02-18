@@ -23,9 +23,7 @@ describe('Favorites Routes', () => {
   it('gets all favorite', async() => {
     const user = await User.create({ email: 'test@test.com', password: '123123' });
     await Favorites.create([
-      { userId: user.id, word: 'hey' },
-      { userId: user.id, word: 'hi' },
-      { userId: user.id, word: 'why hello' }
+      { userId: user.id, word: 'hey' }
     ]);
     const agent = request.agent(app);
     
@@ -38,9 +36,7 @@ describe('Favorites Routes', () => {
       .get('/api/v1/favorites')
       .then(res => {
         expect(res.body).toEqual([
-          { _id: expect.any(String), userId: user.id, word: 'hey', __v: 0 },
-          { _id: expect.any(String), userId: user.id, word: 'hi', __v: 0 },
-          { _id: expect.any(String), userId: user.id, word: 'why hello', __v: 0 }
+          { _id: expect.any(String), userId: user.id, word: 'hey', __v: 0 }
         ]);
       });
   });
@@ -61,6 +57,27 @@ describe('Favorites Routes', () => {
           _id: expect.any(String),
           userId: user.id,
           word: 'hey',
+          __v: 0
+        });
+      });
+  });
+
+  it('can delete a favorite by id', async() => {
+    const user = await User.create({ email: 'test@test.com', password: '123123' });
+    const { _id } = await Favorites.create({ userId: user.id, word: 'whoawhoawhoa' });
+    const agent = request.agent(app);
+
+    await agent
+      .post('/api/v1/auth/login')
+      .send({ email: 'test@test.com', password: '123123' });
+
+    return agent
+      .delete(`/api/v1/favorites/${_id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: _id.toString(),
+          userId: user.id,
+          word: 'whoawhoawhoa',
           __v: 0
         });
       });
